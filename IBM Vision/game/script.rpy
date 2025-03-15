@@ -11,5 +11,8 @@ label start:
     a "Good luck!"
     a "Good luck!"
 
+    show mc happy1
+    mc "I'm Dr. Elias B. Monroe. happy to meet you"
+ 
     jump prologue
     return

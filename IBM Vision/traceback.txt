@@ -1,0 +1,32 @@
+﻿I'm sorry, but an uncaught exception occurred.
+
+While running game code:
+  File "renpy/common/00start.rpy", line 213, in script
+    python hide:
+  File "renpy/common/00start.rpy", line 213, in <module>
+    python hide:
+  File "renpy/common/00start.rpy", line 214, in _execute_python_hide
+    renpy.warp.warp()
+Exception: Could not find a statement to warp to. (script.rpy:5)
+
+-- Full Traceback ------------------------------------------------------------
+
+Full traceback:
+  File "renpy/common/00start.rpy", line 213, in script
+    python hide:
+  File "c:\Users\user\Downloads\renpy-8.3.6-sdk\renpy\ast.py", line 834, in execute
+    renpy.python.py_exec_bytecode(self.code.bytecode, self.hide, store=self.store)
+  File "c:\Users\user\Downloads\renpy-8.3.6-sdk\renpy\python.py", line 1184, in py_exec_bytecode
+    exec(bytecode, globals, locals)
+  File "renpy/common/00start.rpy", line 213, in <module>
+    python hide:
+  File "renpy/common/00start.rpy", line 214, in _execute_python_hide
+    renpy.warp.warp()
+  File "c:\Users\user\Downloads\renpy-8.3.6-sdk\renpy\warp.py", line 147, in warp
+    raise Exception("Could not find a statement to warp to. ({})".format(spec))
+Exception: Could not find a statement to warp to. (script.rpy:5)
+
+Windows-10-10.0.26100 AMD64
+Ren'Py 8.3.6.25022803
+IBM Vision 1.0
+Sat Mar 15 18:04:48 2025
