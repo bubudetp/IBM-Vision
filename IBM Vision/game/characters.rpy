@@ -1,2 +1,6 @@
 define mc = Character("Dr. Elias B. Monroe", color="#c8c8c8", image="mc")
-
+define p = Character("Asya", what_color="#eb1818")
+define hinata = Character("Hinata", color="#FFD700", image="hinata", callback=callback_builder("hinata"))
+define hayashi = Character("Professor Hayashi", color="#32CD32", image="hayashi")
+define erika = Character("Erika", color="#FF69B4")
+define kaito = Character("Kaito", color="#87CEFA")
