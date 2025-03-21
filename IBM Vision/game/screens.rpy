@@ -81,7 +81,85 @@ style frame:
 ## In-game screens
 ################################################################################
 
+screen slide_screen():
+    tag menu
 
+    $ show_paragraph1 = bool(paragraph1_content.strip()) or paragraph1_is_image
+    $ show_paragraph2 = bool(paragraph2_content.strip()) or paragraph2_is_image
+    $ is_empty = not show_paragraph1 and not show_paragraph2
+    $ only_one_filled = show_paragraph1 != show_paragraph2
+
+    $ title_position = get_title_yalign()
+    $ spacing_value = box_spacing if not only_one_filled else 0
+    $ dynamic_box_width = get_box_widths()
+
+    vbox:
+        xalign title_xalign
+        yalign title_position
+        spacing 20
+
+        # Title
+        text title_text size 50 bold True xalign 0.5
+
+        if not is_empty:
+            null height 30
+
+            hbox:
+                xalign 0.5
+                yalign 0.3
+                spacing spacing_value
+
+                # Handle Paragraph 1 (Text or Image)
+                if show_paragraph1:
+                    vbox:
+                        xsize dynamic_box_width
+                        ysize box_height
+                        frame:
+                            xsize dynamic_box_width
+                            ysize box_height
+                            background "#eeeeee"
+                            padding (10, 10)
+
+                            if paragraph1_is_image and paragraph1_image:
+                                add paragraph1_image xsize image_max_width ysize image_max_height xalign 0.5 yalign 0.5
+                            else:
+                                viewport:
+                                    draggable True
+                                    mousewheel True
+                                    scrollbars "vertical"
+                                    text paragraph1_content size font_size line_spacing line_spacing
+
+                # Handle Paragraph 2 (Text or Image)
+                if show_paragraph2:
+                    vbox:
+                        xsize dynamic_box_width
+                        ysize box_height
+                        frame:
+                            xsize dynamic_box_width
+                            ysize box_height
+                            background "#eeeeee"
+                            padding (10, 10)
+
+                            if paragraph2_is_image and paragraph2_image:
+                                add paragraph2_image xsize image_max_width ysize image_max_height xalign 0.5 yalign 0.5
+                            else:
+                                viewport:
+                                    draggable True
+                                    mousewheel True
+                                    scrollbars "vertical"
+                                    text paragraph2_content size font_size line_spacing line_spacing
+
+# Time Screen 
+screen time_display():
+    zorder 100  # Ensure it's above most other elements
+    frame:
+        xalign 1.0
+        yalign 0.0
+        padding (10, 10)
+        background "#0008"
+        vbox:
+            text "[current_day_name] - Day [day]" size 18 color "#fff"
+            text "[hour]:{:02d} [period]".format(minute) size 22 color "#fff" bold True
 ## Say screen ##################################################################
 ##
 ## The say screen is used to display dialogue to the player. It takes two
@@ -99,13 +177,13 @@ screen say(who, what):
 
     window:
         id "window"
-
+        background Frame("gui/black.png")
         if who is not None:
 
             window:
                 id "namebox"
                 style "namebox"
-                text who id "who"
+                text who id "who" color "#ffffff"
 
         text what id "what"
 
@@ -113,7 +191,7 @@ screen say(who, what):
     ## If there's a side image, display it above the text. Do not display on the
     ## phone variant - there's no room.
     if not renpy.variant("small"):
-        add SideImage() xalign 0.0 yalign 1.0
+        add SideImage() xpos -250 yalign 1.0 zoom 0.8
 
 
 ## Make the namebox available for styling through the Character object.
@@ -135,7 +213,7 @@ style window:
     yalign gui.textbox_yalign
     ysize gui.textbox_height
 
-    background Image("gui/textbox.png", xalign=0.5, yalign=1.0)
+    background Image("gui/black.png", xalign=0.5, yalign=1.0)
 
 style namebox:
     xpos gui.name_xpos
@@ -148,12 +226,18 @@ style namebox:
     padding gui.namebox_borders.padding
 
 style say_label:
+    xmargin 10
+    ymargin 5
     properties gui.text_properties("name", accent=True)
     xalign gui.name_xalign
     yalign 0.5
+    color Color("#ffffff")
 
 style say_dialogue:
     properties gui.text_properties("dialogue")
+
+    xmargin 10
+    ymargin 5
 
     xpos gui.dialogue_xpos
     xsize gui.dialogue_width
@@ -208,8 +292,13 @@ screen choice(items):
     style_prefix "choice"
 
     vbox:
+        xalign 0.5
+        yalign 0.9
         for i in items:
-            textbutton i.caption action i.action
+            textbutton i.caption action i.action:
+                focus_mask True
+                hovered (lambda: renpy.sound.play("audio/button_hover2.mp3")) 
+                activate_sound "audio/button_click.mp3"
 
 
 style choice_vbox is vbox

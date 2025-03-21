@@ -2,9 +2,9 @@
 errors listed below, and try again.
 
 
-File "game/script.rpy", line 14: end of line expected.
-    hinata "Whoa, check out that building over there! That’s where they work on advanced AI models! I heard students even train their own AI assistants!"{fast}
-                                                                                                                                                         ^
+File "game/screens.rpy", line 187: 'color' is not a keyword argument or valid child of the window statement.
+    color "#ffffff"
+         ^
 
 Ren'Py Version: Ren'Py 8.3.6.25022803
-Wed Mar 19 18:10:33 2025
+Fri Mar 21 23:17:46 2025

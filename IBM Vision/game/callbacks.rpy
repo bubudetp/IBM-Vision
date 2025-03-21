@@ -1,28 +1,55 @@
 init python:
+    side_image_only_mode = False
     def callback_builder(character_sprite_basename):
         def char_callback(event, **kwargs):
-            # Get currently active attributes (emotions)
-            current_attributes = renpy.get_attributes(character_sprite_basename)
+            # Get the current attributes
+
+            global side_image_only_mode
+
+            if side_image_only_mode: return
+            
+            current_attributes = list(renpy.get_attributes(character_sprite_basename))
             print("Raw attributes:", current_attributes)  # Debugging output
 
-            # Extract only the base emotion (remove _closed and _talk)
-            filtered_attributes = [
-                attr.replace("_closed", "").replace("_talk", "")
-                for attr in current_attributes
-            ]
+            # Define allowed expressions
+            valid_expressions = ["neutral", "happy", "worried", "thinking", "frustrated", "serious", "smile"]
+            chosen_emotion = "neutral"  # Default emotion
 
-            # Ensure only unique emotions are kept
-            filtered_attributes = list(set(filtered_attributes))
+            # Extract the dominant emotion (ignoring _closed/_opened)
+            for attr in current_attributes:
+                base_attr = attr.replace("_closed", "").replace("_opened", "").replace("_talk", "")
+                if base_attr in valid_expressions:
+                    chosen_emotion = base_attr
+                    break  # Use the first valid expression
 
-            # Default to "neutral" if no valid emotion is found
-            current_emotion = filtered_attributes[0] if filtered_attributes else "neutral"
-
-            print("Filtered emotion:", current_emotion)  # Debugging output
-
-            # Update the sprite based on the event
+            # Determine talking or resting state
             if event == "show_done":
-                renpy.show(f"{character_sprite_basename} {current_emotion}_talk", layer="master")
+                sprite_variant = f"{character_sprite_basename} {chosen_emotion}_talk"
             elif event == "slow_done":
-                renpy.show(f"{character_sprite_basename} {current_emotion}_closed", layer="master")
-                renpy.restart_interaction()  # Ensure image updates correctly
+                sprite_variant = f"{character_sprite_basename} {chosen_emotion}_closed"
+                renpy.restart_interaction()  # Ensure smooth transition
+            else:
+                sprite_variant = f"{character_sprite_basename} {chosen_emotion}_opened"
+
+            # Ensure previous attributes are cleared before applying the new one
+            renpy.show(character_sprite_basename, what=None)  # Remove stacking issues
+
+            # Print debug info for tracking
+            print("Filtered emotion:", chosen_emotion)  
+            print(f"Final sprite: {sprite_variant}")
+
+            # Show the correct sprite with talking animation
+            renpy.show(sprite_variant, layer="master")
+
         return char_callback
+
+init:
+    define config.layers = [
+        'background',  # Default layer for backgrounds
+        'master',      # Default layer for characters and objects
+        'transient',   # Default layer for temporary effects
+        'screens',     # Default UI layer (DO NOT REMOVE)
+        'overlay',     # Default overlay layer
+        'mask_layer',  # Your custom layer for masks
+        'character_layer'
+    ]
